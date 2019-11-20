@@ -37,7 +37,7 @@ def chooseOption():
             else:
                 pass
         except ValueError:
-            print("illegal input")
+            print("illegal input\n")
             
     return choice
 
@@ -53,7 +53,7 @@ def chooseParams():
             dirName = path[path.rfind('\\')+1:len(path)]
             break
         except OSError:
-            print("Illegal path")
+            print("Illegal path\n")
     
     newName = input("Enter the format of the new names: ")
     extension = input("Enter the file extension: ")
@@ -61,6 +61,15 @@ def chooseParams():
         extension = "." + extension
 
     return path, dirName, newName, extension
+
+def checkProceed():
+    """Basic check for whether user wants to proceed. Returns 1 if the user wants to
+        proceed; returns 2 if the user aborts the rename process."""
+    print("Are you sure you want to proceed? Enter: \n")
+    print("1 -- proceed with renaming")
+    print("2 -- abort rename process")
+    choice = chooseOption()
+    return choice
 
 ###############################################################
 
@@ -70,7 +79,12 @@ while (True):
     choice = chooseOption()
     if choice == 1:
         (path, dirName, newName, extension) = chooseParams()
-        rename(path, dirName, newName, extension)
-        print("\n\n")
+        go = checkProceed()
+        if go == 1:
+            rename(path, dirName, newName, extension)
+            print("\nRename EXECUTED")
+        else:
+            print("\nRename CANCELLED")
+        print("\n")
     elif choice == 2:
         break
