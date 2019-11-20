@@ -4,7 +4,7 @@ import os
 # this function is copied from here (with modifications):
 # https://www.geeksforgeeks.org/rename-multiple-files-using-python/
 
-def rename(path, dirName, newName, extension):
+def rename(path, dirName, newName):
     """
     Renames all the files in a directory. Inputs to the function are the
     path, the name of the directory, the new name format, and the extension
@@ -13,7 +13,8 @@ def rename(path, dirName, newName, extension):
     i = 1
 
     for filename in os.listdir(path):
-        dst = newName + "-" + str(i) + extension
+        ext = filename[filename.rfind('.'): len(filename)]
+        dst = newName + "-" + str(i) + ext
         src = os.path.join(path, filename)
         dst = os.path.join(path, dst)
 
@@ -48,19 +49,19 @@ def checkNonEmptyInput(string):
 
 def helper():
     """Prints the instructions on how to use the command-line program"""
-    print("1 -- enter rename process")
+    print("1 -- begin rename process")
     print("2 -- quit")
 
 def chooseParams(safePath):
     """Allows user to input the path to the directory containing the files to be
-        renamed."""
+        renamed, and choose the format of the new file names."""
     print("Please use \\ in the path")
     
     while (True):
         # forces user to rename files that are in some directory on the desktop
         # to prevent accidental renaming of important files in the OS
         while (True):
-            path = input("Enter the path of the directory containing the files: ")
+            path = input("\nEnter the path of the directory containing the files: ")
 
             # using lower() makes directory path case insensitive
             if safePath.lower() not in path.lower():
@@ -70,7 +71,7 @@ def chooseParams(safePath):
                     print("Non-existent path\n")
             elif safePath.lower() in path.lower():
                 print("The current path is: " + path.lower())
-                checkProceed()
+                choice = checkProceed()
                 if choice == 1:
                     break
                 if choice == 2:
@@ -87,32 +88,25 @@ def chooseParams(safePath):
         stripped = checkNonEmptyInput(newName)
         if stripped != "empty":
             break
-    
-    while (True):
-        extension = input("Enter the file extension: ")
-        stripped = checkNonEmptyInput(extension)
-        if stripped != "empty":
-            break
-        
-    if extension[0] != ".":
-        extension = "." + extension
+    return path, dirName, newName
 
-    return path, dirName, newName, extension
 
-def successRename(path, dirName, newName, extension):
+def successRename(path, dirName, newName):
     """checks whether the rename operation was successful by comparing the new names
         of every file with the specified newName format"""
     os.chdir(path)
-    renamed = os.listdir(path)
+    renamed = os.listdir(path) # this is a list
+    renamed.sort(key = len)
+    
     i = 1
     flag = True
     for j in range(len(renamed)):
-        nameFormat = newName + "-" + str(i) + extension
-        if nameFormat in renamed:
+        nameFormat = newName + "-" + str(i)
+        if nameFormat in renamed[j]:
             #print(str(i) + " success")
             pass
         else:
-            print(str(i) + " failed -- " + nameFormat)
+            print(str(i) + " -- " + nameFormat + " failed")
             flag = False
         i += 1
     return flag
@@ -122,7 +116,7 @@ def checkProceed():
         proceed; returns 2 if the user aborts the rename process."""
     print("Are you sure you want to proceed? Enter: \n")
     print("1 -- proceed with renaming")
-    print("2 -- abort rename process")
+    print("2 -- return to previous step")
     choice = chooseOption()
     return choice
 
@@ -158,13 +152,15 @@ while (True):
     helper()
     choice = chooseOption()
     if choice == 1:
-        (path, dirName, newName, extension) = chooseParams(safePath)
+        (path, dirName, newName) = chooseParams(safePath)
+        print("You are about to rename the files in: \t " + path)
+        print("to the format: \t " + newName + "-(index)\n")
         go = checkProceed()
         if go == 1:
-            rename(path, dirName, newName, extension)
+            rename(path, dirName, newName)
             print("\nRename EXECUTED")
             print("Checking status...")
-            successRename(path, dirName, newName, extension)
+            successRename(path, dirName, newName)
         else:
             print("\nRename CANCELLED")
         print("\n")
