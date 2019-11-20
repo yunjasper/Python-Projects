@@ -1,9 +1,6 @@
 # for manipulating the file system, etc.
 import os
 
-# this function is copied from here (with modifications):
-# https://www.geeksforgeeks.org/rename-multiple-files-using-python/
-
 def RemoveSpace(string):
     """This function takes an input of a string. It outputs a string without any spaces
         at the beginning or end of the string."""
@@ -24,6 +21,8 @@ def RemoveSpace(string):
     return string               #returns a string without a space at the end
 
 def checkNonEmptyInput(string):
+    """Checks that the input is not an empty string or that the input is not
+        entirely composed of whitespace (tabs, spaces)"""
     string = RemoveSpace(string)
     if len(string) == 0:
         return 'empty'
@@ -36,12 +35,11 @@ def checkProceed():
     print("Are you sure you want to proceed? Enter: \n")
     print("1 -- proceed with renaming")
     print("2 -- abort current operation")
-    choice = chooseOption()
+    choice = chooseOption()     # input sanitization
     return choice
 
 def chooseOption():
-    """Allows user to choose an option and implements basic input sanitation"""
-    choice = -1
+    """Allows user to choose an option and implements basic input sanitization"""
     while (True):
         choice = input("Choose an option: ")
         try:
@@ -69,9 +67,12 @@ def chooseParams(safePath):
         # forces user to rename files that are in some directory on the desktop
         # to prevent accidental renaming of important files in the OS
         while (True):
-            path = input("\nEnter the path of the directory containing the files: ")
+            print("The path must be from the C:\\ folder.")
+            path = input("\nEnter the path of the directory containing the" + 
+                         " files to be renamed: ")
 
-            # using lower() makes directory path case insensitive
+            # using lower() makes directory path case insensitive;
+            # check to see if the path exists
             if safePath.lower() not in path.lower():
                 if (os.path.exists(path)):
                     print("For safety reasons, renaming files in this directory is not allowed\n")
@@ -85,19 +86,23 @@ def chooseParams(safePath):
                 if choice == 2:
                     pass
         try:
-            os.chdir(path)
-            dirName = path[path.rfind('\\')+1:len(path)]
+            os.chdir(path)  # change directory to the one specified by the path
+            dirName = path[path.rfind('\\')+1:len(path)] # get the directory name
             break
         except OSError:
             print("Non-existent path\n")
 
+    # input the file names format
     while (True):
-        newName = input("Enter the format of the new names: ")
+        newName = input("\nEnter the format of the new names: ")
         stripped = checkNonEmptyInput(newName)
         if stripped != "empty":
             break
     return path, dirName, newName
 
+
+# this function is copied from here (with modifications):
+# https://www.geeksforgeeks.org/rename-multiple-files-using-python/
 
 def rename(path, dirName, newName):
     """
@@ -106,7 +111,7 @@ def rename(path, dirName, newName):
     of the file.
     """
     i = 1
-
+    # rename each file:
     for filename in os.listdir(path):
         ext = filename[filename.rfind('.'): len(filename)]
         dst = newName + "-" + str(i) + ext
@@ -121,10 +126,10 @@ def successRename(path, dirName, newName):
         of every file with the specified newName format"""
     os.chdir(path)
     renamed = os.listdir(path) # this is a list
-    renamed.sort(key = len)
+    renamed.sort(key = len)    # sort list by the index
     
     i = 1
-    flag = True
+    flag = True                # to check if the rename was successful
     for j in range(len(renamed)):
         nameFormat = newName + "-" + str(i)
         if nameFormat in renamed[j]:
@@ -141,15 +146,20 @@ def successRename(path, dirName, newName):
 # basic menu system
 while (True):
     user = input("Enter your username: ")
-    if (os.path.exists(os.path.join("C:\\users\\",user))):
+
+    # check if user exists:
+    if (os.path.exists(os.path.join("C:\\users\\",user))):  # user exists
         print('')
         break
     else:
         print("User does not exist\n")
+
+# we require that the directory containing the files to be renamed
+# be at subdirectory of the Desktop; this is for safety reasons
 safePath = os.path.join("C:\\Users\\", user, "desktop")
 
 while (True):
-    helper()
+    helper()                # print the "menu"
     choice = chooseOption()
     if choice == 1:
         (path, dirName, newName) = chooseParams(safePath)
@@ -168,6 +178,7 @@ while (True):
         else:
             print("\nRename CANCELLED")
         print("\n")
+
     elif choice == 2:
         print("\nProgram terminated.")
         break
