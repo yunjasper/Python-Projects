@@ -20,6 +20,32 @@ def rename(path, dirName, newName, extension):
         os.rename(src,dst)
         i += 1
 
+def RemoveSpace(string):
+    """This function takes an input of a string. It outputs a string without any spaces
+        at the beginning or end of the string."""
+    if len(string)==0:
+        pass                    #if string input is empty, then don't do anything
+    elif (string[-1]==' '):     #runs only if the last character in the string is a space
+        string = string[:-1]    #removes the space
+        string=RemoveSpace(string)     #runs recursively to ensure it runs completely
+    elif (string[-1]=='\t'):    #if last character in string is a tab-space
+        string = string[:-1]    #remove the tab
+        string=RemoveSpace(string)
+    elif (string[0]==' '):      #runs only if the first character in the string is a space
+        string = string[1:]     #removes the space
+        string=RemoveSpace(string)     #recursive to ensure all spaces are removed
+    elif (string[0]=='\t'):
+        string = string[1:]     #if first character in string is a tab-space
+        string=RemoveSpace(string)     #remove tab
+    return string               #returns a string without a space at the end
+
+def checkNonEmptyInput(string):
+    string = RemoveSpace(string)
+    if len(string) == 0:
+        return 'empty'
+    else:
+        return string
+
 def helper():
     """Prints the instructions on how to use the command-line program"""
     print("1 -- enter rename process")
@@ -51,12 +77,12 @@ def chooseParams():
         # to prevent accidental renaming of important files in the OS
         while (True):
             path = input("Enter the path of the directory containing the files: ")
-            if ("c:\\users\\jo\\desktop\\") not in path.lower():
+            if ("c:\\users\\jo\\desktop") not in path.lower():
                 if (os.path.exists(path)):
                     print("For safety reasons, renaming files in this directory is not allowed\n")
                 else:
                     print("Non-existent path\n")
-            elif ("C:\\Users\\JO\\Desktop\\").lower() in path.lower():
+            elif ("C:\\Users\\JO\\Desktop").lower() in path.lower():
                 break
         try:
             os.chdir(path)
@@ -64,9 +90,19 @@ def chooseParams():
             break
         except OSError:
             print("Non-existent path\n")
+
+    while (True):
+        newName = input("Enter the format of the new names: ")
+        stripped = checkNonEmptyInput(newName)
+        if stripped != "empty":
+            break
     
-    newName = input("Enter the format of the new names: ")
-    extension = input("Enter the file extension: ")
+    while (True):
+        extension = input("Enter the file extension: ")
+        stripped = checkNonEmptyInput(extension)
+        if stripped != "empty":
+            break
+        
     if extension[0] != ".":
         extension = "." + extension
 
