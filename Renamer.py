@@ -4,23 +4,6 @@ import os
 # this function is copied from here (with modifications):
 # https://www.geeksforgeeks.org/rename-multiple-files-using-python/
 
-def rename(path, dirName, newName):
-    """
-    Renames all the files in a directory. Inputs to the function are the
-    path, the name of the directory, the new name format, and the extension
-    of the file.
-    """
-    i = 1
-
-    for filename in os.listdir(path):
-        ext = filename[filename.rfind('.'): len(filename)]
-        dst = newName + "-" + str(i) + ext
-        src = os.path.join(path, filename)
-        dst = os.path.join(path, dst)
-
-        os.rename(src,dst)
-        i += 1
-
 def RemoveSpace(string):
     """This function takes an input of a string. It outputs a string without any spaces
         at the beginning or end of the string."""
@@ -46,6 +29,31 @@ def checkNonEmptyInput(string):
         return 'empty'
     else:
         return string
+
+def checkProceed():
+    """Basic check for whether user wants to proceed. Returns 1 if the user wants to
+        proceed; returns 2 if the user aborts the rename process."""
+    print("Are you sure you want to proceed? Enter: \n")
+    print("1 -- proceed with renaming")
+    print("2 -- abort current operation")
+    choice = chooseOption()
+    return choice
+
+def chooseOption():
+    """Allows user to choose an option and implements basic input sanitation"""
+    choice = -1
+    while (True):
+        choice = input("Choose an option: ")
+        try:
+            choice = int(choice)
+            if choice == 1 or choice == 2:
+                break
+            else:
+                pass
+        except ValueError:
+            print("illegal input\n")
+            
+    return choice
 
 def helper():
     """Prints the instructions on how to use the command-line program"""
@@ -91,6 +99,23 @@ def chooseParams(safePath):
     return path, dirName, newName
 
 
+def rename(path, dirName, newName):
+    """
+    Renames all the files in a directory. Inputs to the function are the
+    path, the name of the directory, the new name format, and the extension
+    of the file.
+    """
+    i = 1
+
+    for filename in os.listdir(path):
+        ext = filename[filename.rfind('.'): len(filename)]
+        dst = newName + "-" + str(i) + ext
+        src = os.path.join(path, filename)
+        dst = os.path.join(path, dst)
+
+        os.rename(src,dst)
+        i += 1
+
 def successRename(path, dirName, newName):
     """checks whether the rename operation was successful by comparing the new names
         of every file with the specified newName format"""
@@ -110,31 +135,6 @@ def successRename(path, dirName, newName):
             flag = False
         i += 1
     return flag
-
-def checkProceed():
-    """Basic check for whether user wants to proceed. Returns 1 if the user wants to
-        proceed; returns 2 if the user aborts the rename process."""
-    print("Are you sure you want to proceed? Enter: \n")
-    print("1 -- proceed with renaming")
-    print("2 -- return to previous step")
-    choice = chooseOption()
-    return choice
-
-def chooseOption():
-    """Allows user to choose an option and implements basic input sanitation"""
-    choice = -1
-    while (True):
-        choice = input("Choose an option: ")
-        try:
-            choice = int(choice)
-            if choice == 1 or choice == 2:
-                break
-            else:
-                pass
-        except ValueError:
-            print("illegal input\n")
-            
-    return choice
 
 ###############################################################
 
@@ -160,10 +160,14 @@ while (True):
             rename(path, dirName, newName)
             print("\nRename EXECUTED")
             print("Checking status...")
-            successRename(path, dirName, newName)
+            flag = successRename(path, dirName, newName)
+            if flag == True:
+                print("Successfully renamed all files.")
+            else:
+                print("Some files were not able to be renamed correctly.")
         else:
             print("\nRename CANCELLED")
         print("\n")
     elif choice == 2:
-        print("Program terminated.")
+        print("\nProgram terminated.")
         break
