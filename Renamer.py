@@ -121,10 +121,11 @@ def successRename(path, dirName, newName, extension):
     os.chdir(path)
     renamed = os.listdir(path)
     i = 1
-    for i in range(len(renamed)):
+    for j in range(len(renamed)):
         nameFormat = newName + "-" + str(i) + extension
         if nameFormat in renamed:
-            print(str(i) + " success")
+            #print(str(i) + " success")
+            pass
         else:
             print(str(i) + " failed -- " + nameFormat)
         i += 1
