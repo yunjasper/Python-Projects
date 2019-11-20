@@ -55,8 +55,9 @@ def chooseOption():
 
 def helper():
     """Prints the instructions on how to use the command-line program"""
+    print("RENAMER: easily batch rename files (not folders)")
     print("1 -- begin rename process")
-    print("2 -- quit")
+    print("2 -- exit")
 
 def chooseParams(safePath):
     """Allows user to input the path to the directory containing the files to be
@@ -66,20 +67,20 @@ def chooseParams(safePath):
     while (True):
         # forces user to rename files that are in some directory on the desktop
         # to prevent accidental renaming of important files in the OS
+        print("\nNote that the folder containing the files to be renamed " +
+                  "must be a subfolder of the Desktop.")
+        print("As such, enter a path beginning from the Desktop.")
         while (True):
-            print("The path must be from the C:\\ folder.")
-            path = input("\nEnter the path of the directory containing the" + 
+            path = input("\nPath to the directory containing the" + 
                          " files to be renamed: ")
-
+            path = os.path.join(safePath, path)
+            
             # using lower() makes directory path case insensitive;
             # check to see if the path exists
-            if safePath.lower() not in path.lower():
-                if (os.path.exists(path)):
-                    print("For safety reasons, renaming files in this directory is not allowed\n")
-                else:
-                    print("Non-existent path\n")
+            if os.path.exists(path) == False:
+                print("Non-existent path\n")
             elif safePath.lower() in path.lower():
-                print("The current path is: " + path.lower())
+                print("\nThe current path is: " + path.lower())
                 choice = checkProceed()
                 if choice == 1:
                     break
