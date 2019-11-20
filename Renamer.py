@@ -15,6 +15,9 @@ renamed properly.
 The program contains code to allow cancellation of certain steps in the
 renaming procedure.
 
+Different versions of this program can be found in the commit history here:
+https://github.com/yunjasper/Python-Projects/blob/master/Renamer.py
+
 Author: Jasper Yun
 Date:   2019-11-20
 """
