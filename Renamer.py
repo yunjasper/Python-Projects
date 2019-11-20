@@ -113,20 +113,29 @@ def rename(path, newName):
     i = 1
     # rename each file:
     for filename in os.listdir(path):
-        
-        ext = filename[filename.rfind('.'): len(filename)]
-        dst = newName + "-" + str(i) + ext
-        src = os.path.join(path, filename)
-        dst = os.path.join(path, dst)
+        if (os.path.isfile(os.path.join(path, filename))):
+            ext = filename[filename.rfind('.'): len(filename)]
+            dst = newName + "-" + str(i) + ext
+            src = os.path.join(path, filename)
+            dst = os.path.join(path, dst)
 
-        os.rename(src,dst)
-        i += 1
+            os.rename(src,dst)
+            i += 1
+        else:
+            pass
 
 def successRename(path, newName):
     """checks whether the rename operation was successful by comparing the new names
         of every file with the specified newName format"""
     os.chdir(path)
-    renamed = os.listdir(path) # this is a list
+    renamed = os.listdir(path)  # this is a list
+    toRem = []                  # empty list of strings to be removed from renamed
+    for i in renamed:
+        if os.path.isdir(os.path.join(path, i)):
+            toRem.append(i)
+    for i in toRem:
+        renamed.remove(i)
+
     renamed.sort(key = len)    # sort list by the index
     
     i = 1
