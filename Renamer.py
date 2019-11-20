@@ -87,7 +87,7 @@ def chooseParams(safePath):
                     pass
         try:
             os.chdir(path)  # change directory to the one specified by the path
-            dirName = path[path.rfind('\\')+1:len(path)] # get the directory name
+            #dirName = path[path.rfind('\\')+1:len(path)] # get the directory name
             break
         except OSError:
             print("Non-existent path\n")
@@ -98,13 +98,13 @@ def chooseParams(safePath):
         stripped = checkNonEmptyInput(newName)
         if stripped != "empty":
             break
-    return path, dirName, newName
+    return path, newName
 
 
 # this function is copied from here (with modifications):
 # https://www.geeksforgeeks.org/rename-multiple-files-using-python/
 
-def rename(path, dirName, newName):
+def rename(path, newName):
     """
     Renames all the files in a directory. Inputs to the function are the
     path, the name of the directory, the new name format, and the extension
@@ -113,6 +113,7 @@ def rename(path, dirName, newName):
     i = 1
     # rename each file:
     for filename in os.listdir(path):
+        
         ext = filename[filename.rfind('.'): len(filename)]
         dst = newName + "-" + str(i) + ext
         src = os.path.join(path, filename)
@@ -121,7 +122,7 @@ def rename(path, dirName, newName):
         os.rename(src,dst)
         i += 1
 
-def successRename(path, dirName, newName):
+def successRename(path, newName):
     """checks whether the rename operation was successful by comparing the new names
         of every file with the specified newName format"""
     os.chdir(path)
@@ -162,15 +163,15 @@ while (True):
     helper()                # print the "menu"
     choice = chooseOption()
     if choice == 1:
-        (path, dirName, newName) = chooseParams(safePath)
+        (path, newName) = chooseParams(safePath)
         print("You are about to rename the files in: \t " + path)
         print("to the format: \t " + newName + "-(index)\n")
         go = checkProceed()
         if go == 1:
-            rename(path, dirName, newName)
+            rename(path, newName)
             print("\nRename EXECUTED")
             print("Checking status...")
-            flag = successRename(path, dirName, newName)
+            flag = successRename(path, newName)
             if flag == True:
                 print("Successfully renamed all files.")
             else:
