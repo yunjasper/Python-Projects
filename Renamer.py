@@ -79,7 +79,7 @@ def helper():
     print("1 -- begin rename process")
     print("2 -- exit")
 
-def chooseParams(safePath):
+def chooseParams(safePath, prohibitedChars):
     """Allows user to input the path to the directory containing the files to be
         renamed, and choose the format of the new file names."""
     print("Please use \\ in the path")
@@ -112,11 +112,27 @@ def chooseParams(safePath):
             print("Non-existent path\n")
 
     # input the file names format
-    while (True):
+    # a check is performed to see if any prohibited characters are in the format name
+    choose = False
+    while (choose == False):
         newName = input("\nEnter the format of the new names: ")
         stripped = checkNonEmptyInput(newName) # input sanitization
         if stripped != "empty":                # non-empty input, so exit while loop
-            break
+            passed = 0
+            for i in prohibitedChars:
+                if i in stripped:
+                    choose = False
+                    print("Your format contains prohibited characters. Try again.")
+                    print("The prohibited characters are: ")
+                    listedChars = ''
+                    for i in prohibitedChars:
+                        listedChars += i + ' '
+                    print(listedChars)
+                    break
+                else:
+                    passed += 1
+            if passed == len(prohibitedChars):
+                break
     return path, newName
 
 
@@ -172,6 +188,8 @@ def successRename(path, newName):
 
 ###############################################################
 
+prohibitedChars = ['>','<',':','"','/','\\','|','?','*',]
+
 # basic menu system
 while (True):
     user = input("Enter your username: ")
@@ -193,7 +211,7 @@ while (True):
     
     if choice == 1: # enter the renaming process
         
-        (path, newName) = chooseParams(safePath)    # choose parameters
+        (path, newName) = chooseParams(safePath, prohibitedChars)
         print("You are about to rename the files in: \t " + path)
         print("to the format: \t " + newName + "-(index)\n")
 
