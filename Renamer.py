@@ -51,22 +51,6 @@ def helper():
     print("1 -- enter rename process")
     print("2 -- quit")
 
-def chooseOption():
-    """Allows user to choose an option and implements basic input sanitation"""
-    choice = -1
-    while (True):
-        choice = input("Choose an option: ")
-        try:
-            choice = int(choice)
-            if choice == 1 or choice == 2:
-                break
-            else:
-                pass
-        except ValueError:
-            print("illegal input\n")
-            
-    return choice
-
 def chooseParams(safePath):
     """Allows user to input the path to the directory containing the files to be
         renamed."""
@@ -121,6 +105,7 @@ def successRename(path, dirName, newName, extension):
     os.chdir(path)
     renamed = os.listdir(path)
     i = 1
+    flag = True
     for j in range(len(renamed)):
         nameFormat = newName + "-" + str(i) + extension
         if nameFormat in renamed:
@@ -128,7 +113,9 @@ def successRename(path, dirName, newName, extension):
             pass
         else:
             print(str(i) + " failed -- " + nameFormat)
+            flag = False
         i += 1
+    return flag
 
 def checkProceed():
     """Basic check for whether user wants to proceed. Returns 1 if the user wants to
@@ -137,6 +124,22 @@ def checkProceed():
     print("1 -- proceed with renaming")
     print("2 -- abort rename process")
     choice = chooseOption()
+    return choice
+
+def chooseOption():
+    """Allows user to choose an option and implements basic input sanitation"""
+    choice = -1
+    while (True):
+        choice = input("Choose an option: ")
+        try:
+            choice = int(choice)
+            if choice == 1 or choice == 2:
+                break
+            else:
+                pass
+        except ValueError:
+            print("illegal input\n")
+            
     return choice
 
 ###############################################################
@@ -166,4 +169,5 @@ while (True):
             print("\nRename CANCELLED")
         print("\n")
     elif choice == 2:
+        print("Program terminated.")
         break
