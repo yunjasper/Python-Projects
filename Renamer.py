@@ -47,13 +47,23 @@ def chooseParams():
     print("Please use \\ in the path")
     
     while (True):
-        path = input("Enter the path of the directory containing the files: ")
+        # forces user to rename files that are in some directory on the desktop
+        # to prevent accidental renaming of important files in the OS
+        while (True):
+            path = input("Enter the path of the directory containing the files: ")
+            if ("c:\\users\\jo\\desktop\\") not in path.lower():
+                if (os.path.exists(path)):
+                    print("For safety reasons, renaming files in this directory is not allowed\n")
+                else:
+                    print("Non-existent path\n")
+            elif ("C:\\Users\\JO\\Desktop\\").lower() in path.lower():
+                break
         try:
             os.chdir(path)
             dirName = path[path.rfind('\\')+1:len(path)]
             break
         except OSError:
-            print("Illegal path\n")
+            print("Non-existent path\n")
     
     newName = input("Enter the format of the new names: ")
     extension = input("Enter the file extension: ")
