@@ -22,7 +22,7 @@ Author: Jasper Yun
 Date:   2019-11-20
 """
 
-import os
+import os, ctypes
 
 def RemoveSpace(string):
     """This function takes an input of a string. It outputs a string without any spaces
@@ -114,6 +114,16 @@ def chooseParams(safePath, prohibitedChars):
         except OSError:     # if path does not exist, catch the error
             print("Non-existent path\n")
 
+    # check if user wants to display the files in the specified directory
+    printFilesInDir(path)
+
+    # check if user wants to proceed with this folder
+    choice = checkProceed()
+    if choice == 1:
+        print("ok")
+    if choice == 2:
+        pass
+    
     # input the file names format
     # a check is performed to see if any prohibited characters are in the format name
     choose = False
@@ -137,6 +147,47 @@ def chooseParams(safePath, prohibitedChars):
             if passed == len(prohibitedChars):
                 break
     return path, newName
+
+
+def printFilesInDir(path):
+    """Prints the files in the current directory specified by the input variable, path"""
+    print("\nWould you like to see the files in this folder? Please choose an option:")
+    print("1 -- display the files in this folder")
+    print("2 -- pass")
+    choice = chooseOption()
+    if choice == 1:
+        files = os.listdir(path)
+        if len(files) > 50:
+            print("There are more than 50 files in this directory.")
+            print("1 -- display all files")
+            print("2 -- display the first 50 files")
+            choice2 = chooseOption()
+            if choice2 == 1:
+                for i in files:
+                    if (os.path.isfile(os.path.join(path, i))):
+                        print("File:\t %s" %(i))
+                    elif (os.path.isdir(os.path.join(path, i))):
+                        print("Folder:\t %s" %(i))
+                    else:
+                        print("Object:\t %s" %(i))
+            else:
+                for i in range(50):
+                    if (os.path.isfile(os.path.join(path, files[i]))):
+                        print("File:\t %s" %(i))
+                    elif (os.path.isdir(os.path.join(path, files[i]))):
+                        print("Folder:\t %s" %(i))
+                    else:
+                        print("Object:\t %s" %(files[i]))
+        else:
+            for i in files:
+                if (os.path.isfile(os.path.join(path, i))):
+                    print("File:\t %s" %(i))
+                elif (os.path.isdir(os.path.join(path, i))):
+                    print("Folder:\t %s" %(i))
+                else:
+                    print("Object:\t %s" %(i))
+    if choice == 2:
+        pass
 
 
 # this function is copied from here (with modifications):
@@ -192,6 +243,13 @@ def successRename(path, newName):
 ###############################################################
 
 prohibitedChars = ['>','<',':','"','/','\\','|','?','*',]
+
+try:
+ is_admin = os.getuid() == 0
+except AttributeError:
+ is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+
+print(is_admin)
 
 # basic menu system
 while (True):
